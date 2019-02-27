@@ -96,17 +96,7 @@ pipeline {
 		  }
         }
       }
-	  stage('Build Release') {
-        when {
-          branch 'master'
-        }
-        steps {
-          container('nodejs') 
-		  		  dir ('./to-do-app') {
-          container('nodejs') {
-            sh "npm install"
-			
-		  
+	   
       stage('Promote to Environments') {
         when {
           branch 'master'
