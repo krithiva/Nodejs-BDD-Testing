@@ -55,9 +55,48 @@ pipeline {
               sh "make tag"
             }
           }
-		}
+		  dir ('./to-do-app') {
+          container('nodejs') {
+            sh "npm install"
+            sh "CI=true DISPLAY=:99 npm test"
+
+           // sh 'export VERSION=`cat VERSION` && skaffold build -f skaffold.yaml'
+
+           // sh "jx step post build --image $DOCKER_REGISTRY/$ORG/$APP_NAME:\$(cat VERSION)"
+          }
+		  }
+        }
       }
 	  stage('BDD') {
+        when {
+          branch 'master'
+        }
+        steps {
+          container('nodejs') {
+            // ensure we're not on a detached head
+            sh "git checkout master"
+            sh "git config --global credential.helper store"
+
+            sh "jx step git credentials"
+            // so we can retrieve the version in later steps
+            sh "echo \$(jx-release-version) > VERSION"
+          }
+          dir ('./charts/nodejs-bdd-testing') {
+            container('nodejs') {
+              sh "make tag"
+            }
+          }
+		  dir ('./to-do-app') {
+          container('nodejs') {
+            sh "npm install"
+            sh "npm start"
+			sh "npm test"
+         
+          }
+		  }
+        }
+      }
+	  stage('Build Release') {
         when {
           branch 'master'
         }
@@ -66,12 +105,6 @@ pipeline {
 		  		  dir ('./to-do-app') {
           container('nodejs') {
             sh "npm install"
-			sh "npm start"
-			sh "npm test"
-			}
-			}
-			}
-			}
 			
 		  
       stage('Promote to Environments') {
