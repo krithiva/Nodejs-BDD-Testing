@@ -55,18 +55,25 @@ pipeline {
               sh "make tag"
             }
           }
-		  dir ('./to-do-app') {
+		}
+      }
+	  stage('BDD') {
+        when {
+          branch 'master'
+        }
+        steps {
+          container('nodejs') 
+		  		  dir ('./to-do-app') {
           container('nodejs') {
             sh "npm install"
-            sh "CI=true DISPLAY=:99 npm test"
-
-           // sh 'export VERSION=`cat VERSION` && skaffold build -f skaffold.yaml'
-
-           // sh "jx step post build --image $DOCKER_REGISTRY/$ORG/$APP_NAME:\$(cat VERSION)"
-          }
-		  }
-        }
-      }
+			sh "npm start"
+			sh "npm test"
+			}
+			}
+			}
+			}
+			
+		  
       stage('Promote to Environments') {
         when {
           branch 'master'
