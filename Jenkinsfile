@@ -90,8 +90,7 @@ pipeline {
           container('nodejs') {
             sh "npm install"
 			sh "npm test"
-			sh "npm run test_nft"
-        
+       
           }
 		  }
         }
