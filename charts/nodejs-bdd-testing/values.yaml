@@ -4,7 +4,7 @@
 replicaCount: 1
 image:
   repository: 10.35.244.69:5000/krithiva/nodejs-bdd-testing
-  tag: 0.0.11
+  tag: 0.0.12
   pullPolicy: IfNotPresent
 service:
   name: nodejs-bdd-testing
